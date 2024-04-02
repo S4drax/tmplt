@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package com.sadrax.tmplt.infrastructure.shared.proto;
+
+option java_multiple_files = true;
+
+option java_outer_classname = "UpdateTransactionStatusEvent";
+option java_package = "com.sadrax.tmplt.proto";
+
+message UpdateTransactionStatus {
+
+  enum TansactionStatus {
+    STARTED = 0;
+    PENDING = 1;
+    CANCELLED = 2;
+    PROCESSING = 3;
+    FINISHED = 4;
+  }
+  string transactionId = 1; //required
+  TansactionStatus transactionStatus = 2; //required
+}
+

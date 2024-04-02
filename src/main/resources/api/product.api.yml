@@ -1,0 +1,229 @@
+openapi: "3.0.0"
+servers:
+  - url: http://localhost:8080
+info:
+  version: 1.0.0
+  title: Template Product Api
+paths:
+  "/product/search":
+    get:
+      summary: "Get product list"
+      operationId: "getProductList"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductListFilter'
+      responses:
+        200:
+          description: "An array of Product Info"
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProductPartial"
+        400:
+          $ref: "common.api.yml#/components/responses/400"
+        401:
+          $ref: "common.api.yml#/components/responses/401"
+        404:
+          $ref: "common.api.yml#/components/responses/404"
+        500:
+          $ref: "common.api.yml#/components/responses/500"
+  "/product/":
+    post:
+      summary: "Add product"
+      operationId: "addProduct"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModifyProductRequest"
+      responses:
+        200:
+          description: "Add new Product"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Product"
+        400:
+          $ref: "common.api.yml#/components/responses/400"
+        401:
+          $ref: "common.api.yml#/components/responses/401"
+        404:
+          $ref: "common.api.yml#/components/responses/404"
+        500:
+          $ref: "common.api.yml#/components/responses/500"
+  "/product/{id}":
+    get:
+      summary: "Get product"
+      operationId: "getProducts"
+      parameters:
+        - name: id
+          in: path
+          description: "Id of a program"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: "Product Information"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Product"
+        400:
+          $ref: "common.api.yml#/components/responses/400"
+        401:
+          $ref: "common.api.yml#/components/responses/401"
+        404:
+          $ref: "common.api.yml#/components/responses/404"
+        500:
+          $ref: "common.api.yml#/components/responses/500"
+    put:
+      summary: "Update product"
+      operationId: "updateProduct"
+      parameters:
+        - name: id
+          in: path
+          description: "Id of a program"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModifyProductRequest"
+      responses:
+        200:
+          description: "Update existing Product"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Product"
+        400:
+          $ref: "common.api.yml#/components/responses/400"
+        401:
+          $ref: "common.api.yml#/components/responses/401"
+        404:
+          $ref: "common.api.yml#/components/responses/404"
+        500:
+          $ref: "common.api.yml#/components/responses/500"
+    delete:
+      summary: "Delete product"
+      operationId: "deleteProduct"
+      parameters:
+        - name: id
+          in: path
+          description: "Id of a program"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        204:
+          description: "Delete existing Product"
+        400:
+          $ref: "common.api.yml#/components/responses/400"
+        401:
+          $ref: "common.api.yml#/components/responses/401"
+        404:
+          $ref: "common.api.yml#/components/responses/404"
+        500:
+          $ref: "common.api.yml#/components/responses/500"
+  "/product/{id}/similar":
+    get:
+      summary: "Get similar products"
+      operationId: "getSimilarProducts"
+      parameters:
+        - name: id
+          in: path
+          description: "Id of a program"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: "Product Information"
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        400:
+          $ref: "common.api.yml#/components/responses/400"
+        401:
+          $ref: "common.api.yml#/components/responses/401"
+        404:
+          $ref: "common.api.yml#/components/responses/404"
+        500:
+          $ref: "common.api.yml#/components/responses/500"
+components:
+  schemas:
+    ProductListFilter:
+      properties:
+        producent:
+          description: "producent filter"
+          type: string
+        category:
+          description: "product category filter"
+          type: string
+    ProductPartial:
+      properties:
+        name:
+          description: "Product Name"
+          type: string
+        price:
+          description: "Product Price"
+          type: number
+        stock:
+          description: "Product available stock"
+          type: integer
+    Product:
+      description: "Representation of product"
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Id"
+        name:
+          type: string
+          description: "Product name"
+        category:
+          type: string
+          description: "Product category"
+        producent:
+          type: string
+          description: "Product producent"
+        availableStock:
+          type: number
+          description: "Product available stock"
+        price:
+          type: number
+          description: "Product price"
+    ModifyProductRequest:
+      description: "Add or Update request"
+      properties:
+        name:
+          type: string
+          description: "Product name"
+        category:
+          type: string
+          description: "Product category"
+        producent:
+          type: string
+          description: "Product producent"
+        compareValue:
+          type: string
+          description: "Compare Value for store functionality"
+        description:
+          type: string
+          description: "Description"

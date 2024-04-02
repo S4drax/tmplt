@@ -1,0 +1,181 @@
+openapi: "3.0.0"
+servers:
+  - url: http://localhost:8080
+info:
+  version: 1.0.0
+  title: Template Product Api
+paths:
+  "/transaction/search":
+    get:
+      summary: "Get transaction list"
+      operationId: "getTransactionList"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionListFilter'
+      responses:
+        200:
+          description: "An array of transactions"
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TransactionPartial"
+        400:
+          $ref: "common.api.yml#/components/responses/400"
+        401:
+          $ref: "common.api.yml#/components/responses/401"
+        404:
+          $ref: "common.api.yml#/components/responses/404"
+        500:
+          $ref: "common.api.yml#/components/responses/500"
+  "/transaction/":
+    post:
+      summary: "Start transaction"
+      operationId: "startTransaction"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartTransactionRequest"
+      responses:
+        204:
+          description: "Initialise transaction"
+        400:
+          $ref: "common.api.yml#/components/responses/400"
+        401:
+          $ref: "common.api.yml#/components/responses/401"
+        404:
+          $ref: "common.api.yml#/components/responses/404"
+        500:
+          $ref: "common.api.yml#/components/responses/500"
+  "/transaction/{id}":
+    get:
+      summary: "Get transaction"
+      operationId: "getTransaction"
+      parameters:
+        - name: id
+          in: path
+          description: "Id of a transaction"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: "Transaction Information"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Transaction"
+        400:
+          $ref: "common.api.yml#/components/responses/400"
+        401:
+          $ref: "common.api.yml#/components/responses/401"
+        404:
+          $ref: "common.api.yml#/components/responses/404"
+        500:
+          $ref: "common.api.yml#/components/responses/500"
+    put:
+      summary: "Update transaction status"
+      operationId: "updateTransactionStatus"
+      parameters:
+        - name: id
+          in: path
+          description: "Id of a transaction"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTransactionStatusRequest"
+      responses:
+        203:
+          description: "Update existing Transaction status"
+        400:
+          $ref: "common.api.yml#/components/responses/400"
+        401:
+          $ref: "common.api.yml#/components/responses/401"
+        404:
+          $ref: "common.api.yml#/components/responses/404"
+        500:
+          $ref: "common.api.yml#/components/responses/500"
+components:
+  schemas:
+    TransactionListFilter:
+      properties:
+        client:
+          description: "client filter"
+          type: string
+          format: uuid
+    TransactionPartial:
+      properties:
+        client:
+          description: "Client Name"
+          type: string
+        price:
+          description: "Total Price"
+          type: number
+    Transaction:
+      description: "Representation of transaction"
+      properties:
+        id:
+          description: "Id"
+          type: string
+          format: uuid
+        client:
+          description: "Transaction Client name"
+          type: string
+        status:
+          description: "Transaction status"
+          type: string
+        currency:
+          description: "Transaction currency"
+          type: string
+        totalPrice:
+          description: "Total transaction price"
+          type: number
+        transactionItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransactionItem"
+    TransactionItem:
+      description: "Transaction item"
+      properties:
+        id:
+          description: "Transaction item id"
+          type: string
+          format: uuid
+        product:
+          description: "Transaction item product name"
+          type: string
+        buyPrice:
+          description: "Transaction item buy price"
+          type: number
+        currency:
+          description: "Transaction item currency"
+          type: string
+    StartTransactionRequest:
+      description: "Start transaction"
+      properties:
+        client:
+          description: "Transaction Client name"
+          type: string
+          format: uuid
+        transactionItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransactionItem"
+    UpdateTransactionStatusRequest:
+      description: "Update request"
+      properties:
+        status:
+          type: string
+          description: "new status"
